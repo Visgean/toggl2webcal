@@ -1,10 +1,9 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, TIMESTAMP, Text
 from sqlalchemy.orm import sessionmaker
-
-
-engine = create_engine('postgresql://visgean@localhost')
 
 Base = declarative_base()
 
@@ -20,5 +19,7 @@ class TimeEntry(Base):
     source = Column(String(length=128))
 
 
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
+def get_session_creator(conn_string):
+    engine = create_engine(conn_string)
+    Base.metadata.create_all(engine)
+    return sessionmaker(bind=engine)

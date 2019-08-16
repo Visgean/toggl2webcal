@@ -1,18 +1,16 @@
 import icalendar
 
 from datetime import datetime, timedelta
-from models import Session, TimeEntry
+from .models import TimeEntry
 
 
-def build_ical():
+def build_ical(session, filename):
     calendar = icalendar.Calendar()
     calendar.add('prodid', "toggl2ical")
     calendar.add('version', '2.0')
     calendar.add('CALSCALE', 'GREGORIAN')
     calendar.add('X-WR-CALNAME', 'Toggl events')
     calendar.add('method', 'publish')
-
-    session = Session()
 
     for entry in session.query(TimeEntry).order_by(TimeEntry.start):
         entry: TimeEntry
@@ -31,8 +29,5 @@ def build_ical():
 
     ical = calendar.to_ical()
 
-    with open("calendar.ics", "wb") as file:
+    with open(filename, "wb") as file:
         file.write(ical)
-
-
-build_ical()
